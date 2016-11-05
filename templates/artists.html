@@ -5,7 +5,7 @@
 body {
   color: rgb(201, 198, 184);
   background-color: rgb(29, 29, 29);
-  font-family: Inconsolata, sans-serif;
+  font-family: Inconsolata, Avenir Next, sans-serif;
 }
 
 body, html, ul {
@@ -14,11 +14,16 @@ body, html, ul {
   padding-top: 1em;
 }
 
+a {
+  text-decoration: inherit;
+  color: inherit;
+}
+
 ul {
   list-style: none;
 }
 
-li {
+li > a {
   padding: 0.5em;
   flex: 1;
   display: flex;
@@ -46,6 +51,7 @@ body > div {
 }
 
   </style>
+  <meta name="viewport" content="width=device-width">
 </head>
 <body>
 <div>
@@ -56,8 +62,10 @@ body > div {
     <ul>
       {% for artist in span['weeklyartistchart']['artist'] %}
       <li>
-        <span>{{artist['name']}}</span>
-        <span>{{artist['playcount']}}</span>
+        <a href="spotify:search:{{artist['name']}}">
+          <span>{{artist['name']}}</span>
+          <span>{{artist['playcount']}}</span>
+        </a>
       </li>
       {% endfor %}
     </ul>
