@@ -1,23 +1,69 @@
 <html>
 <head>
   <title>Artists - {{user}}</title>
+  <style type="text/css">
+body {
+  color: rgb(201, 198, 184);
+  background-color: rgb(29, 29, 29);
+  font-family: Inconsolata, sans-serif;
+}
+
+body, html, ul {
+  margin: 0px;
+  padding: 0px;
+  padding-top: 1em;
+}
+
+ul {
+  list-style: none;
+}
+
+li {
+  padding: 0.5em;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+li span:first-child {
+  flex: 1;
+}
+
+li span:last-child {
+  color: #5D5D5D;
+}
+
+h1, h2, h3 {
+  text-transform: uppercase;
+  font-weight: normal;
+  text-align: center;
+  color: #9CD9F0; /** blue */
+}
+
+body > div {
+  max-width: 400px;
+  margin: auto;
+}
+
+  </style>
 </head>
 <body>
-<h1>Artists by week</h1>
-{% for span in spans %}
-{% if span['weeklyartistchart']['artist'] | length > 0 %}
 <div>
-  <h2>Week of {{span['weeklyartistchart']['@attr']['from'] | format_date}}</h2>
-  <ul>
-    {% for artist in span['weeklyartistchart']['artist'] %}
-    <li>
-      <span>{{artist['name']}}</span>
-      <span>{{artist['playcount']}}</span>
-    </li>
-    {% endfor %}
-  </ul>
+  {% for span in spans %}
+  {% if span['weeklyartistchart']['artist'] | length > 0 %}
+  <div>
+    <h2>{{span['weeklyartistchart']['@attr']['from'] | format_date}}</h2>
+    <ul>
+      {% for artist in span['weeklyartistchart']['artist'] %}
+      <li>
+        <span>{{artist['name']}}</span>
+        <span>{{artist['playcount']}}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+  {% endfor %}
 </div>
-{% endif %}
-{% endfor %}
 </body>
 </html>
