@@ -1,0 +1,23 @@
+<html>
+<head>
+  <title>Artists - {{user}}</title>
+</head>
+<body>
+<h1>Artists by week</h1>
+{% for span in spans %}
+{% if span['weeklyartistchart']['artist'] | length > 0 %}
+<div>
+  <h2>Week of {{span['weeklyartistchart']['@attr']['from'] | format_date}}</h2>
+  <ul>
+    {% for artist in span['weeklyartistchart']['artist'] %}
+    <li>
+      <span>{{artist['name']}}</span>
+      <span>{{artist['playcount']}}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endfor %}
+</body>
+</html>
