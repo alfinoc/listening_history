@@ -12,7 +12,20 @@ CHART_METHOD = 'user.getweeklychartlist'
 ARTIST_METHOD = 'user.getweeklyartistchart'
 
 # Once you're caching, could just make this a year or something.
-NUM_SPANS = 10
+NUM_SPANS = 20
+
+# Keyed on API urls.
+cache = {}
+
+# May not return responses in order given in urls.
+def getCharts(urls):
+  cached = [cache[url] for url in urls if url in cache]
+  newUrls = [url for url in urls if url not in cache]
+  print 'hit:', len(cached), 'missed:', len(newUrls)
+  responses = map(lambda resp: loads(resp.content), sendAll(map(get, newUrls)))
+  for i in range(len(newUrls)):
+    cache[newUrls[i]] = responses[i]
+  return cached + responses
 
 # methods: , 
 def chart_url(user):
@@ -31,7 +44,7 @@ def artists():
   charts = loads(urlopen(chart_url(user)).read())
   spans = sorted(charts['weeklychartlist']['chart'], key=lambda span : -int(span['from']))[:NUM_SPANS]
   urls = map(partial(artist_url, user), spans)
-  responses = map(lambda resp: loads(resp.content), sendAll(map(get, urls)))
+  responses = getCharts(urls)
   
   # Trim to only include artists that haven't appeared in a more recent week.
   seen = set()
