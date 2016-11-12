@@ -17,11 +17,13 @@ NUM_SPANS = 52 * 2
 # Keyed on API urls.
 cache = {}
 
-# May not return responses in order given in urls.
+# May not return responses in order given in urls. Also, first url
+# in urls will always be a cache miss.
 def getCharts(urls):
+  if urls[0] in cache:
+    del cache[urls[0]]
   cached = [cache[url] for url in urls if url in cache]
   newUrls = [url for url in urls if url not in cache]
-  print 'hit:', len(cached), 'missed:', len(newUrls)
   responses = map(lambda resp: loads(resp.content), sendAll(map(get, newUrls)))
   for i in range(len(newUrls)):
     cache[newUrls[i]] = responses[i]
@@ -44,7 +46,7 @@ def artists():
   charts = loads(urlopen(chart_url(user)).read())
   spans = sorted(charts['weeklychartlist']['chart'], key=lambda span : -int(span['from']))[:NUM_SPANS]
   urls = map(partial(artist_url, user), spans)
-  responses = getCharts(urls)
+  responses = sorted(getCharts(urls), key=lambda response : 0)#- int(response['weeklyartistchart']['@attr']['from']))
   
   # Trim to only include artists that haven't appeared in a more recent week.
   seen = set()
