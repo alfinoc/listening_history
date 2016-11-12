@@ -13,7 +13,7 @@ ARTIST_METHOD = 'user.getweeklyartistchart'
 ALBUM_METHOD = 'user.getweeklyalbumchart'
 
 # Once you're caching, could just make this a year or something.
-NUM_SPANS = 2
+NUM_SPANS = 2 * 52
 
 # Keyed on API urls.
 cache = {}

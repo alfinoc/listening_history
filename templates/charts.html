@@ -34,6 +34,12 @@ li a > span:first-child {
   flex: 1;
   font-size: larger;
   flex-direction: column;
+  display: flex;
+}
+
+li a > span:first-child > span:last-child {
+  font-size: smaller;
+  color: #E09690;
 }
 
 li a > span:first-child span {
@@ -41,6 +47,7 @@ li a > span:first-child span {
 }
 
 li a > span:last-child {
+  padding-left: 1em;
   color: #5D5D5D;
 }
 
@@ -86,12 +93,10 @@ h1.links div {
     <ul>
       {% for entry in chart['entries'] %}
       <li>
-        <a href="spotify:search:{{entry['name']}}">
+        <a href="spotify:search:{{entry['title']}}">
           <span>
             <span>{{entry['title']}}</span>
-            <!--
             <span>{{entry['subtitle']}}</span>
-            -->
           </span>
           <span>{{entry['weight']}}</span>
         </a>
