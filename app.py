@@ -10,6 +10,7 @@ KEY = 'ef2f18ff332a62f72ad46c4820bdb11b'
 BASE_URL = 'http://ws.audioscrobbler.com/2.0/?format=json&api_key={0}'.format(KEY)
 CHART_METHOD = 'user.getweeklychartlist'
 ARTIST_METHOD = 'user.getweeklyartistchart'
+ALBUM_METHOD = 'user.getweeklyalbumchart'
 
 # Once you're caching, could just make this a year or something.
 NUM_SPANS = 2
@@ -35,28 +36,53 @@ def chart_url(user):
 def artist_url(user, span):
   return BASE_URL + '&method={0}&user={1}&from={2}&to={3}'.format(ARTIST_METHOD, user, span['from'], span['to']) 
 
+def album_url(user, span):
+  return BASE_URL + '&method={0}&user={1}&from={2}&to={3}'.format(ALBUM_METHOD, user, span['from'], span['to']) 
+
+def response_to_model(topLevelKey, titleKey, subtitleKey, response):
+  chart = {
+    'week': int(response[topLevelKey]['@attr']['from']),
+    'entries': []
+  }
+  for entry in response[topLevelKey][titleKey]:
+    model = {}
+    model['title'] = entry['name']
+    model['weight'] = int(entry['playcount'])
+    if subtitleKey:
+      model['subtitle'] = entry[subtitleKey]['#text']
+    chart['entries'].append(model)
+  return chart
+
+# modelFactory should take a last.fm response and output a cute little generic struct
+def template_model(modelFactory, urlFactory):
+  user = request.args.get('user')
+  charts = loads(urlopen(chart_url(user)).read())
+  spans = sorted(charts['weeklychartlist']['chart'], key=lambda span : -int(span['from']))[:NUM_SPANS]
+  urls = map(partial(urlFactory, user), spans)
+
+  # Build a key agnostic model.
+  model = map(modelFactory, getCharts(urls))
+  model = sorted(model, key=lambda entry : -entry['week'])
+
+  # Trim to only include entries that haven't appeared in more recent weeks.
+  seen = set()
+  result = []
+  for chart in model:
+    chart['entries'] = [entry for entry in chart['entries'] if not entry['title'] in seen]
+    seen.update([entry['title'] for entry in chart['entries']])
+  return render_template('charts.html', charts=model, user=user)
+
 @app.template_filter('format_date')
 def format_date(timestamp):
   return datetime.fromtimestamp(int(timestamp)).strftime('%b %d')
 
 @app.route('/artists')
 def artists():
-  user = request.args.get('user')
-  charts = loads(urlopen(chart_url(user)).read())
-  spans = sorted(charts['weeklychartlist']['chart'], key=lambda span : -int(span['from']))[:NUM_SPANS]
-  urls = map(partial(artist_url, user), spans)
-  responses = sorted(getCharts(urls), key=lambda response : - int(response['weeklyartistchart']['@attr']['from']))
-  
-  # Trim to only include artists that haven't appeared in a more recent week.
-  seen = set()
-  result = []
-  for response in responses:
-    artists = response['weeklyartistchart']['artist']
-    artists = [a for a in artists if not a['name'] in seen]
-    seen.update([a['name'] for a in artists])
-    response['weeklyartistchart']['artist'] = artists
+  return template_model(partial(response_to_model, 'weeklyartistchart', 'artist', None), artist_url)
 
-  return render_template('artists.html', spans=responses, user=user)
+@app.route('/albums')
+def albums():
+  return template_model(partial(response_to_model, 'weeklyalbumchart', 'album', 'artist'), album_url)
 
 if __name__ == "__main__":
     app.run(debug=True)

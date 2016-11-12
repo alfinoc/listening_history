@@ -30,12 +30,17 @@ li > a {
   flex-direction: row;
 }
 
-li span:first-child {
+li a > span:first-child {
   flex: 1;
   font-size: larger;
+  flex-direction: column;
 }
 
-li span:last-child {
+li a > span:first-child span {
+  flex: 1;
+}
+
+li a > span:last-child {
   color: #5D5D5D;
 }
 
@@ -51,21 +56,44 @@ body > div {
   margin: auto;
 }
 
+h1.links {
+  flex-direction: row;
+  text-transform: uppercase;
+  display: flex;
+  text-align: center;
+  color: #E09690;
+}
+
+h1.links div {
+  flex: 1;
+}
+
   </style>
   <meta name="viewport" content="width=device-width">
 </head>
 <body>
 <div>
-  {% for span in spans %}
-  {% if span['weeklyartistchart']['artist'] | length > 0 %}
+  <!--
+  <h1 class="links">
+    <div>Artists</div>
+    <div>Albums</div>
+  </h1>
+  -->
+  {% for chart in charts %}
+  {% if chart['entries'] | length > 0 %}
   <div>
-    <h2>{{span['weeklyartistchart']['@attr']['from'] | format_date}}</h2>
+    <h2>{{chart['week'] | format_date}}</h2>
     <ul>
-      {% for artist in span['weeklyartistchart']['artist'] %}
+      {% for entry in chart['entries'] %}
       <li>
-        <a href="spotify:search:{{artist['name']}}">
-          <span>{{artist['name']}}</span>
-          <span>{{artist['playcount']}}</span>
+        <a href="spotify:search:{{entry['name']}}">
+          <span>
+            <span>{{entry['title']}}</span>
+            <!--
+            <span>{{entry['subtitle']}}</span>
+            -->
+          </span>
+          <span>{{entry['weight']}}</span>
         </a>
       </li>
       {% endfor %}
