@@ -28,7 +28,7 @@
   border: none;
 }
 
-.submit-form input[type=text]:focus {
+.submit-form input:focus {
   background-color: white;
 }
 
@@ -37,13 +37,13 @@
 </head>
 <body>
 <div>
-  <div class="submit-form">
-    <input type="text" placeholder="add a film">
-    <input type="date" id="date-picker">
+  <form class="submit-form" action="/films/{{user}}/add">
+    <input type="text" placeholder="add a film" name="film">
+    <input type="date" id="date-picker" name="watch_time">
     <button type="submit">+</button>
-  </div>
+  </form>
   <ul>
-    {% for entry in log | sort(attribute='watch_time') %}
+    {% for entry in log | sort(attribute='watch_time', reverse=True) %}
     <li>
       <a>
         <span>

@@ -1,12 +1,16 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 from json import loads
 from urllib2 import urlopen
 from grequests import get, map as sendAll
 from functools import partial
 from datetime import datetime
 from film_store import SqlFilmStore
+from dateutil.parser import parse
+import time
+
 app = Flask(__name__)
 
+SQL_FILE = '/Users/chrisalfino/Projects/listening_history/film_store.sql'
 KEY = 'ef2f18ff332a62f72ad46c4820bdb11b'
 BASE_URL = 'http://ws.audioscrobbler.com/2.0/?format=json&api_key={0}'.format(KEY)
 CHART_METHOD = 'user.getweeklychartlist'
@@ -92,5 +96,20 @@ def films(username):
   store = SqlFilmStore('/Users/chrisalfino/Projects/listening_history/film_store.sql')
   return render_template('films.html', log=store.get(username), user=username)
 
+@app.route('/films/<username>/add')
+def films_add(username):
+  store = SqlFilmStore(SQL_FILE)
+  if len(username) == 0:
+    raise ValueError('username required')
+  film = request.args['film']
+  if len(film) > 0:
+    try:
+      watchTimeDt = parse(request.args['watch_time'])
+      watchTimeSeconds = int(time.mktime(watchTimeDt.timetuple()))
+      store.insert(username, film, watchTimeSeconds)
+    except:
+      pass
+  return redirect('/films/' + username)
+
 if __name__ == "__main__":
-    app.run(debug=True)
+  app.run(debug=True)
