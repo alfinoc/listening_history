@@ -2,77 +2,34 @@
 <head>
   <title>Films - {{user}}</title>
   <style type="text/css">
-body {
-  color: rgb(201, 198, 184);
-  background-color: rgb(29, 29, 29);
-  font-family: Inconsolata, Avenir Next, sans-serif;
-}
+    {% include 'main.css' %}
 
-body, html, ul {
-  margin: 0px;
-  padding: 0px;
-  padding-top: 1em;
-}
-
-a {
-  text-decoration: inherit;
-  color: inherit;
-}
-
-ul {
-  list-style: none;
-}
-
-li > a {
-  padding: 0.5em;
-  flex: 1;
+.submit-form {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
-li a > span:first-child {
+.submit-form > * {
+  margin: 0.5em;
+}
+
+.submit-form input[type=text] {
+  display: flex;
   flex: 1;
   font-size: larger;
-  flex-direction: column;
-  display: flex;
 }
 
-li a > span:first-child > span:last-child {
-  font-size: smaller;
-  color: #E09690;
+.submit-form input {
+  padding: 0.5em;
+  border-radius: 5px;
+  background-color: #B0B0B0;
+  outline: none;
+  border: none;
 }
 
-li a > span:first-child span {
-  flex: 1;
-}
-
-li a > span:last-child {
-  padding-left: 1em;
-  color: #5D5D5D;
-}
-
-h1, h2, h3 {
-  text-transform: uppercase;
-  font-weight: normal;
-  text-align: center;
-  color: #9CD9F0; /** blue */
-}
-
-body > div {
-  max-width: 400px;
-  margin: auto;
-}
-
-h1.links {
-  flex-direction: row;
-  text-transform: uppercase;
-  display: flex;
-  text-align: center;
-  color: #E09690;
-}
-
-h1.links div {
-  flex: 1;
+.submit-form input[type=text]:focus {
+  background-color: white;
 }
 
   </style>
@@ -80,6 +37,11 @@ h1.links div {
 </head>
 <body>
 <div>
+  <div class="submit-form">
+    <input type="text" placeholder="add a film">
+    <input type="date" id="date-picker">
+    <button type="submit">+</button>
+  </div>
   <ul>
     {% for entry in log | sort(attribute='watch_time') %}
     <li>
@@ -93,6 +55,10 @@ h1.links div {
     </li>
     {% endfor %}
   </ul>
+
+  <script type="text/javascript">
+    document.getElementById('date-picker').valueAsDate = new Date();
+  </script>
 </div>
 </body>
 </html>
