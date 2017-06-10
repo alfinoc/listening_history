@@ -1,0 +1,98 @@
+<html>
+<head>
+  <title>Films - {{user}}</title>
+  <style type="text/css">
+body {
+  color: rgb(201, 198, 184);
+  background-color: rgb(29, 29, 29);
+  font-family: Inconsolata, Avenir Next, sans-serif;
+}
+
+body, html, ul {
+  margin: 0px;
+  padding: 0px;
+  padding-top: 1em;
+}
+
+a {
+  text-decoration: inherit;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+li > a {
+  padding: 0.5em;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+li a > span:first-child {
+  flex: 1;
+  font-size: larger;
+  flex-direction: column;
+  display: flex;
+}
+
+li a > span:first-child > span:last-child {
+  font-size: smaller;
+  color: #E09690;
+}
+
+li a > span:first-child span {
+  flex: 1;
+}
+
+li a > span:last-child {
+  padding-left: 1em;
+  color: #5D5D5D;
+}
+
+h1, h2, h3 {
+  text-transform: uppercase;
+  font-weight: normal;
+  text-align: center;
+  color: #9CD9F0; /** blue */
+}
+
+body > div {
+  max-width: 400px;
+  margin: auto;
+}
+
+h1.links {
+  flex-direction: row;
+  text-transform: uppercase;
+  display: flex;
+  text-align: center;
+  color: #E09690;
+}
+
+h1.links div {
+  flex: 1;
+}
+
+  </style>
+  <meta name="viewport" content="width=device-width">
+</head>
+<body>
+<div>
+  <ul>
+    {% for entry in log | sort(attribute='watch_time') %}
+    <li>
+      <a>
+        <span>
+          <span>{{entry['film']}}</span>
+          <span></span>
+        </span>
+        <span>{{entry['watch_time'] | format_date}}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+</body>
+</html>

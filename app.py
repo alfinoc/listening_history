@@ -90,7 +90,7 @@ def films(username):
   if len(username) == 0:
     raise ValueError('username required')
   store = SqlFilmStore('/Users/chrisalfino/Projects/listening_history/film_store.sql')
-  return str(store.get(username))
+  return render_template('films.html', log=store.get(username), user=username)
 
 if __name__ == "__main__":
     app.run(debug=True)
