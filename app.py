@@ -4,6 +4,7 @@ from urllib2 import urlopen
 from grequests import get, map as sendAll
 from functools import partial
 from datetime import datetime
+from film_store import SqlFilmStore
 app = Flask(__name__)
 
 KEY = 'ef2f18ff332a62f72ad46c4820bdb11b'
@@ -83,6 +84,13 @@ def artists():
 @app.route('/albums')
 def albums():
   return template_model(partial(response_to_model, 'weeklyalbumchart', 'album', 'artist'), album_url)
+
+@app.route('/films/<username>')
+def films(username):
+  if len(username) == 0:
+    raise ValueError('username required')
+  store = SqlFilmStore('/Users/chrisalfino/Projects/listening_history/film_store.sql')
+  return str(store.get(username))
 
 if __name__ == "__main__":
     app.run(debug=True)
