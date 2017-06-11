@@ -32,13 +32,24 @@
   background-color: white;
 }
 
+li form {
+  margin-left: 0.5em;
+}
+
+.footer {
+  text-align: center;
+  font-style: italic;
+  text-decoration: underline;
+  color: #E09690;
+}
+
   </style>
   <meta name="viewport" content="width=device-width">
 </head>
 <body>
 <div>
   <form class="submit-form" action="/films/{{user}}/add">
-    <input type="text" placeholder="add a film" name="film">
+    <input type="text" placeholder="add a film" name="film" id="film-input">
     <input type="date" id="date-picker" name="watch_time">
     <button type="submit">+</button>
   </form>
@@ -51,13 +62,21 @@
           <span></span>
         </span>
         <span>{{entry['watch_time'] | format_date}}</span>
+        {% if showRemove %}
+        <form action="/films/{{user}}/{{entry.id}}/remove">
+          <button type="submit">Remove</button>
+        </form>
+        {% endif %}
       </a>
     </li>
     {% endfor %}
   </ul>
+  <div class="footer">
+    <a href="/films/{{user}}?remove">remove entries</a>
+  </div>
 
   <script type="text/javascript">
-    document.getElementById('date-picker').valueAsDate = new Date();
+document.getElementById('date-picker').valueAsDate = new Date();
   </script>
 </div>
 </body>

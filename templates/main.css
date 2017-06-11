@@ -70,3 +70,7 @@ h1.links {
 h1.links div {
   flex: 1;
 }
+
+form {
+  margin: 0;
+}

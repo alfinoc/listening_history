@@ -93,8 +93,10 @@ def albums():
 def films(username):
   if len(username) == 0:
     raise ValueError('username required')
+  showRemove = 'remove' in request.args
   store = SqlFilmStore('/Users/chrisalfino/Projects/listening_history/film_store.sql')
-  return render_template('films.html', log=store.get(username), user=username)
+  return render_template('films.html', log=store.get(username),
+      user=username, showRemove=showRemove)
 
 @app.route('/films/<username>/add')
 def films_add(username):
@@ -109,6 +111,15 @@ def films_add(username):
       store.insert(username, film, watchTimeSeconds)
     except:
       pass
+  return redirect('/films/' + username)
+
+@app.route('/films/<username>/<int:id>/remove')
+def films_remove(username, id):
+  store = SqlFilmStore(SQL_FILE)
+  try:
+    store.remove(username, id)
+  except:
+    pass
   return redirect('/films/' + username)
 
 if __name__ == "__main__":

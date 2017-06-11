@@ -5,6 +5,7 @@ import time
 Setup:
 
 CREATE TABLE film_log (
+  Id integer primary key autoincrement,
   User varchar(255),
   Film varchar(255),
   WatchTime int,
@@ -15,15 +16,17 @@ CREATE TABLE film_log (
 
 """
 
-SELECT_FMT = 'SELECT User, Film, WatchTime, SubmitTime \
+SELECT_FMT = 'SELECT Id, User, Film, WatchTime, SubmitTime \
   FROM film_log WHERE User = ?'
 
 INSERT_FMT = 'INSERT INTO film_log \
   (User, Film, WatchTime, SubmitTime, Latitude, Longitude) \
   VALUES (?, ?, ?, ?, ?, ?)'
 
+DELETE_FMT = 'DELETE FROM film_log WHERE User = ? AND Id = ?'
+
 def toDict(row):
-  return dict(zip(('user', 'film', 'watch_time', 'submit_time'), row))
+  return dict(zip(('id', 'user', 'film', 'watch_time', 'submit_time'), row))
 
 class SqlFilmStore:
   def __init__(self, sqlPath):
@@ -43,3 +46,11 @@ class SqlFilmStore:
       cursor.execute(SELECT_FMT, (user,))
       rows = cursor.fetchall()
     return map(toDict, rows)
+
+  def remove(self, user, id):
+    with self.store_:
+      cursor = self.store_.cursor()
+      cursor.execute(DELETE_FMT, (user, id))
+      self.store_.commit()
+
+
