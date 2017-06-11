@@ -7,29 +7,27 @@
 .submit-form {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-end;
+  padding-top: 0.5em;
 }
 
-.submit-form > * {
-  margin: 0.5em;
-}
-
-.submit-form input[type=text] {
-  display: flex;
-  flex: 1;
-  font-size: larger;
+.submit-form > *:first-child {
+  margin-right: 0.5em;
 }
 
 .submit-form input {
   padding: 0.5em;
-  border-radius: 5px;
-  background-color: #B0B0B0;
-  outline: none;
+  background-color: transparent;
   border: none;
+  outline: none;
+  display: flex;
+  flex: 1;
+  font-size: larger;
+  color: rgb(201, 198, 184);
+  border-bottom: 2px solid #9CD9F0;
 }
 
 .submit-form input:focus {
-  background-color: white;
 }
 
 li form {
@@ -43,15 +41,38 @@ li form {
   color: #E09690;
 }
 
+button {
+  -webkit-appearance: none;
+  outline: none;
+  border: none;
+  font-family: inherit;
+  margin: auto;
+  display: block;
+  font-size: larger;
+  text-transform: lowercase;
+  border-radius: 2px;
+  background-color: #9CD9F0;
+  box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+}
+
+button.remove {
+  background-color: #E09690;
+  font-size: smaller;
+}
+
   </style>
   <meta name="viewport" content="width=device-width">
 </head>
 <body>
 <div>
-  <form class="submit-form" action="/films/{{user}}/add">
-    <input type="text" placeholder="add a film" name="film" id="film-input">
-    <input type="date" id="date-picker" name="watch_time">
-    <button type="submit">+</button>
+  <form action="/films/{{user}}/add">
+    <div class="submit-form">
+      <input type="text" placeholder="enter film name" name="film" id="film-input">
+      <input type="date" id="date-picker" name="watch_time">
+    </div>
+    <div class="submit-form">
+      <button type="submit" class="text">Add</button>
+    </div>
   </form>
   <ul>
     {% for entry in log | sort(attribute='watch_time', reverse=True) %}
@@ -64,16 +85,20 @@ li form {
         <span>{{entry['watch_time'] | format_date}}</span>
         {% if showRemove %}
         <form action="/films/{{user}}/{{entry.id}}/remove">
-          <button type="submit">Remove</button>
+          <button type="submit" class="remove">remove</button>
         </form>
         {% endif %}
       </a>
     </li>
     {% endfor %}
   </ul>
+  {% if not showRemove %}
   <div class="footer">
-    <a href="/films/{{user}}?remove">remove entries</a>
+    <a href="/films/{{user}}?remove">
+      <button class="remove">remove</button>
+    </a>
   </div>
+  {% endif %}
 
   <script type="text/javascript">
 document.getElementById('date-picker').valueAsDate = new Date();
